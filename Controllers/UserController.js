@@ -1,4 +1,10 @@
-import { hashPassword, User, validateUser } from "../Models/UserModel.js";
+import {
+  hashPassword,
+  User,
+  validateLogin,
+  validateUser,
+} from "../Models/UserModel.js";
+import bcrypt from "bcrypt";
 
 const createUser = async (req, res) => {
   const { error } = validateUser(req.body);
@@ -24,8 +30,20 @@ const createUser = async (req, res) => {
   });
 };
 
+const loginUser = async (req, res) => {
+  const { error } = validateLogin(req.body);
+  if (error) return res.status(400).send(error.details);
+
+  let user = await User.findOne({ email: req.body.email });
+  if (!user) return res.status(400).send("Invalid Email!");
+
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword) return res.status(400).send("Invalid Password!");
+  res.send("Logging in...");
+};
+
 const getUsers = async (req, res) => {
   res.send("This is getUsers Route!");
 };
 
-export { createUser, getUsers };
+export { createUser, loginUser, getUsers };

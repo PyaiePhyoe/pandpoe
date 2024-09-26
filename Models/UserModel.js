@@ -53,6 +53,15 @@ function validateUser(user) {
   return schema.validate(user);
 }
 
+function validateLogin(user) {
+  const schema = Joi.object({
+    email: Joi.string().min(5).max(255).email().required(),
+    password: Joi.string().min(8).max(255).required(),
+  });
+
+  return schema.validate(user);
+}
+
 async function hashPassword(password) {
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(password, salt);
@@ -61,4 +70,4 @@ async function hashPassword(password) {
 
 const User = mongoose.model("User", userModel);
 
-export { User, validateUser, hashPassword };
+export { User, validateUser, validateLogin, hashPassword };
