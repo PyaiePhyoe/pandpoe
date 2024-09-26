@@ -2,7 +2,7 @@ import { User, validateUser } from "../Models/UserModel.js";
 
 const createUser = async (req, res) => {
   const { error } = validateUser(req.body);
-  if (error) return res.status(400).send(error);
+  if (error) return res.status(400).send(error.details);
 
   let user = await User.findOne({ email: req.body.email });
   if (user) return res.status(400).send("User is already registered!");
@@ -15,7 +15,15 @@ const createUser = async (req, res) => {
   });
 
   await user.save();
-  res.send(user);
+  res.send({
+    username: user.username,
+    email: user.email,
+    phone: user.phone,
+  });
 };
 
-export { createUser };
+const getUsers = async (req, res) => {
+  res.send("This is getUsers Route!");
+};
+
+export { createUser, getUsers };
