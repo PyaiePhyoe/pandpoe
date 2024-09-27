@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 function authenticate(req, res, next) {
-  const token = req.header("x-auth-token");
+  let token = req.cookies.jwt;
   if (!token) return res.status(401).send("You are not authorized!");
 
   try {

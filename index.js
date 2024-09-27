@@ -1,4 +1,5 @@
 import express, { urlencoded } from "express";
+import cookieParser from "cookie-parser";
 
 import dotenv from "dotenv";
 import connectDB from "./db.js";
@@ -14,6 +15,7 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Hello World! This is the first project.");

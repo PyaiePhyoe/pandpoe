@@ -76,7 +76,7 @@ function generateAuthToken(res, user) {
     expiresIn: "30d",
   });
   res.header("x-auth-token", token);
-  res.cookie("JWT", token, {
+  res.cookie("jwt", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV !== "Development",
     sameSite: "strict",
