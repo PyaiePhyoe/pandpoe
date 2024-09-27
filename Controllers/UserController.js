@@ -58,4 +58,16 @@ const getUsers = async (req, res) => {
   res.json(users);
 };
 
-export { createUser, loginUser, logoutUser, getUsers };
+const userProfile = async (req, res) => {
+  let profile = await User.findById(req.user._id);
+  if (!profile) return res.status(401).send("User is not found!");
+
+  res.json({
+    id: profile._id,
+    username: profile.username,
+    email: profile.email,
+    phone: profile.phone,
+  });
+};
+
+export { createUser, loginUser, logoutUser, getUsers, userProfile };
