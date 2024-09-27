@@ -1,13 +1,15 @@
 import {
+  deleteAuthToken,
+  generateAuthToken,
   hashPassword,
   User,
   validateLogin,
-  validateUser,
+  validateNewUser,
 } from "../Models/UserModel.js";
 import bcrypt from "bcrypt";
 
 const createUser = async (req, res) => {
-  const { error } = validateUser(req.body);
+  const { error } = validateNewUser(req.body);
   if (error) return res.status(400).send(error.details);
 
   let user = await User.findOne({ email: req.body.email });
@@ -22,8 +24,10 @@ const createUser = async (req, res) => {
     password: hashedPassword,
   });
 
+  generateAuthToken(res, user);
   await user.save();
   res.send({
+    id: user._id,
     username: user.username,
     email: user.email,
     phone: user.phone,
@@ -35,15 +39,22 @@ const loginUser = async (req, res) => {
   if (error) return res.status(400).send(error.details);
 
   let user = await User.findOne({ email: req.body.email });
-  if (!user) return res.status(400).send("Invalid Email!");
+  if (!user) return res.status(400).send("Your email has not registered!");
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) return res.status(400).send("Invalid Password!");
-  res.send("Logging in...");
+
+  generateAuthToken(res, user);
+  res.send(`Hi ${user.username}, you have logged in successfully!`);
+};
+
+const logoutUser = async (req, res) => {
+  deleteAuthToken(res);
+  res.send("You have logged out successfully!");
 };
 
 const getUsers = async (req, res) => {
   res.send("This is getUsers Route!");
 };
 
-export { createUser, loginUser, getUsers };
+export { createUser, loginUser, logoutUser, getUsers };

@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const userModel = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -42,7 +43,9 @@ const userModel = new mongoose.Schema(
   { timestamps: true }
 );
 
-function validateUser(user) {
+const User = mongoose.model("User", userSchema);
+
+function validateNewUser(user) {
   const schema = Joi.object({
     username: Joi.string().min(3).max(20).required(),
     email: Joi.string().min(5).max(255).email().required(),
@@ -68,6 +71,32 @@ async function hashPassword(password) {
   return hashPassword;
 }
 
-const User = mongoose.model("User", userModel);
+function generateAuthToken(res, user) {
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_PRIVATE_KEY, {
+    expiresIn: "30d",
+  });
+  res.header("x-auth-token", token);
+  res.cookie("JWT", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== "Development",
+    sameSite: "strict",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+  return token;
+}
 
-export { User, validateUser, validateLogin, hashPassword };
+function deleteAuthToken(res) {
+  res.cookie("JWT", "", {
+    httyOnly: true,
+    expires: new Date(0),
+  });
+}
+
+export {
+  User,
+  validateNewUser,
+  validateLogin,
+  hashPassword,
+  generateAuthToken,
+  deleteAuthToken,
+};
