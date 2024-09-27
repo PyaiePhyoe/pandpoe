@@ -70,4 +70,30 @@ const userProfile = async (req, res) => {
   });
 };
 
-export { createUser, loginUser, logoutUser, getUsers, userProfile };
+const updateProfile = async (req, res) => {
+  let profile = await User.findById(req.user._id);
+  if (!profile) return res.status(401).send("User is not found!");
+
+  if (req.body.username) profile.username = req.body.username;
+  if (req.body.email) profile.email = req.body.email;
+  if (req.body.phone) profile.phone = req.body.phone;
+  if (req.body.password) {
+    profile.password = await hashPassword(req.body.password);
+  }
+
+  res.json({
+    id: profile._id,
+    username: profile.username,
+    email: profile.email,
+    phone: profile.phone,
+  });
+};
+
+export {
+  createUser,
+  loginUser,
+  logoutUser,
+  getUsers,
+  userProfile,
+  updateProfile,
+};
