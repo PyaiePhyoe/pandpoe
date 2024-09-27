@@ -91,6 +91,14 @@ const updateProfile = async (req, res) => {
   });
 };
 
+const getUser = async (req, res) => {
+  const id = req.params["id"];
+  const user = await User.findById(id);
+  res.send(user);
+};
+
+const deleteUser = async (req, res) => {};
+
 export {
   createUser,
   loginUser,
@@ -98,4 +106,5 @@ export {
   getUsers,
   userProfile,
   updateProfile,
+  getUser,
 };

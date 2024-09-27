@@ -6,6 +6,7 @@ import {
   logoutUser,
   userProfile,
   updateProfile,
+  getUser,
 } from "../Controllers/UserController.js";
 import { authenticate, authorizeAdmin } from "../Middleware/Auth.js";
 
@@ -19,5 +20,6 @@ router
   .route("/profile")
   .get(authenticate, userProfile)
   .put(authenticate, updateProfile);
+router.route("/:id").get(authenticate, authorizeAdmin, getUser);
 
 export default router;
