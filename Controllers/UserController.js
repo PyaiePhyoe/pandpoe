@@ -81,6 +81,8 @@ const updateProfile = async (req, res) => {
     profile.password = await hashPassword(req.body.password);
   }
 
+  await profile.save();
+
   res.json({
     id: profile._id,
     username: profile.username,
