@@ -92,12 +92,39 @@ const updateProfile = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const id = req.params["id"];
-  const user = await User.findById(id);
-  res.send(user);
+  const user = await User.findById(req.params.id);
+  if (!user) return res.status(401).send("User is not found!");
+  res.json(user);
 };
 
-const deleteUser = async (req, res) => {};
+const deleteUser = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) return res.status(401).send("User is not found!");
+
+  await User.deleteOne({ _id: user._id });
+  res.send(`${user.username} has been deleted!`);
+};
+
+const updateUserById = async (req, res) => {
+  let profile = await User.findById(req.params.id);
+  if (!profile) return res.status(401).send("User is not found!");
+
+  if (req.body.username) profile.username = req.body.username;
+  if (req.body.email) profile.email = req.body.email;
+  if (req.body.phone) profile.phone = req.body.phone;
+  if (req.body.password) {
+    profile.password = await hashPassword(req.body.password);
+  }
+
+  await profile.save();
+
+  res.json({
+    id: profile._id,
+    username: profile.username,
+    email: profile.email,
+    phone: profile.phone,
+  });
+};
 
 export {
   createUser,
@@ -107,4 +134,6 @@ export {
   userProfile,
   updateProfile,
   getUser,
+  updateUserById,
+  deleteUser,
 };
