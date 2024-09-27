@@ -1,12 +1,13 @@
 import jwt from "jsonwebtoken";
+import { User } from "../Models/UserModel.js";
 
-function authenticate(req, res, next) {
+async function authenticate(req, res, next) {
   let token = req.cookies.jwt;
   if (!token) return res.status(401).send("You are not authorized!");
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-    req.user = decoded;
+    req.user = await User.findById(decoded._id).select("-password");
     next();
   } catch (error) {
     res.status(400).send("Invalid user!");
@@ -16,7 +17,9 @@ function authenticate(req, res, next) {
 function authorizeAdmin(req, res, next) {
   if (req.user && req.user.isAdmin) {
     next();
-  } else return res.status(401).send("You are not an admin!");
+  } else {
+    res.status(401).send("You are not an admin!");
+  }
 }
 
 export { authenticate, authorizeAdmin };
