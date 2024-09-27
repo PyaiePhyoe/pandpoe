@@ -54,7 +54,8 @@ const logoutUser = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-  res.send("This is getUsers Route!");
+  let users = await User.find({});
+  res.json(users);
 };
 
 export { createUser, loginUser, logoutUser, getUsers };
