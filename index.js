@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import connectDB from "./db.js";
 import UserRoutes from "./Routes/UserRoutes.js";
 import CategoryRoutes from "./Routes/CategoryRoutes.js";
+import UploadRoutes from "./Routes/UploadRoutes.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", UserRoutes);
 app.use("/api/categories", CategoryRoutes);
+app.use("/api/upload", UploadRoutes);
 
 app.listen(port, () => {
   console.log(`Hello from server side, port ${port}!`);
