@@ -21,4 +21,4 @@ function validateCategory(category) {
   return schema.validate(category);
 }
 
-export { Category, validateCategory };
+export { Category, categorySchema, validateCategory };
